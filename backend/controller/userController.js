@@ -12,17 +12,6 @@ const mailSender = require("../utils/mailSender");
 
 const { generateToken } = require("../utils/generateToken");
 
-// const generateToken = async (email) => {
-//   let token = await Token.create({
-//     token: crypto.randomBytes(16).toString("hex"),
-//     email: email,
-//   });
-
-//   return token;
-// };
-
-// console.log(generateOTP());
-//
 
 // Function to get coordinates from address using OpenCage API
 async function getCoordinates(address) {
@@ -47,7 +36,7 @@ async function getCoordinates(address) {
  /********************************************/
 
 exports.registerUser = asyncHandler(async (req, res, next) => {
-  const { name, email, password, phoneNumber, locationString } = req.body;
+  const { name, email, password, phoneNumber, address } = req.body;
 
   if (!name || !email || !password) {
     throw new ErrorResponse("All fields are required", 400);
@@ -60,7 +49,7 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
   }
 
   // Get coordinates from the location string
-  const coordinates = await getCoordinates(locationString);
+  const coordinates = await getCoordinates(address);
 
   const user = await User.create({
     name,
@@ -71,6 +60,7 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
       type: "Point",
       coordinates: coordinates,
     },
+    address
   });
 
   res.status(200).json({
@@ -316,49 +306,7 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
   });
 });
 
-// exports.isLoggedIn = expressjwt({
-//   secret: process.env.JWT_SECRET,
-//   algorithms: ["HS256"],
-// });
 
-// exports.requireLogin = async (req, res, next) => {
-//   expressjwt({
-//     algorithms: ["HS256"],
-//     secret: process.env.JWT_SECRET,
-//   })(req, res, (error) => {
-//     if (error) {
-//       return res
-//         .status(401)
-//         .json({ error: "You must login to access this resource" });
-//     } else {
-//       next();
-//     }
-//   });
-// };
-
-// exports.isAdmin = expressjwt({
-//   secret: "thisismyjwtsecret",
-//   algorithms: ["HS256"],
-// });
-//
-// exports.requireAdmin = async (req, res, next) => {
-//   expressjwt({
-//     algorithms: ["HS256"],
-//     secret: process.env.JWT_SECRET,
-//   })(req, res, (error) => {
-//     if (error) {
-//       return res
-//         .status(401)
-//         .json({ error: "You must login to access this resource" });
-//     } else if (req.auth.role != 1) {
-//       return res.status(401).json({ error: "You must be admin" });
-//     } else {
-//       next();
-//     }
-//   });
-// };
-
-////
 exports.isLoggedIn = asyncHandler(async (req, res, next) => {
   let token;
 

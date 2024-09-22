@@ -16,6 +16,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    address: {
+      type: String,
+      required: true,
+    },
 
     location: {
       type: {
@@ -49,10 +53,7 @@ const userSchema = new mongoose.Schema(
         type: mongoose.Schema.Types.ObjectId,
         ref: "Booking",
       },
-      //   type: mongoose.Schema.Types.ObjectId,
 
-      //   ref: "Booking",
-      // },
     ],
   },
   { timestamps: true },
