@@ -12,7 +12,6 @@ const mailSender = require("../utils/mailSender");
 
 const { generateToken } = require("../utils/generateToken");
 
-
 // Function to get coordinates from address using OpenCage API
 async function getCoordinates(address) {
   const apiKey = process.env.OPEN_CAGE_API_KEY; // Replace with your actual API key
@@ -60,7 +59,7 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
       type: "Point",
       coordinates: coordinates,
     },
-    address
+    address,
   });
 
   res.status(200).json({
@@ -306,7 +305,6 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
   });
 });
 
-
 exports.isLoggedIn = asyncHandler(async (req, res, next) => {
   let token;
 
@@ -338,11 +336,10 @@ exports.isLoggedIn = asyncHandler(async (req, res, next) => {
 });
 
 exports.isAdmin = (req, res, next) => {
-  console.log(req.user, ' FROM ISADMIN FUNCTION IN user controller')
+  console.log(req.user, " FROM ISADMIN FUNCTION IN user controller");
   if (req.user && req.user.role === 1) {
     next();
   } else {
     return next(new ErrorResponse(`Not authorized as admin`, 401));
   }
 };
-
