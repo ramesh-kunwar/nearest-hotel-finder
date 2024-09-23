@@ -15,6 +15,7 @@ import RegisterPage from "./components/Register/RegisterPage.jsx";
 import HomePage from "./components/HomePage/HomePage.jsx";
 
 import { Toaster } from "react-hot-toast";
+import LoginPage from "./components/Login/LoginPage.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -23,6 +24,7 @@ const router = createBrowserRouter(
       <Route path="/home" index={true} element={<HomePage />} />
 
       <Route path="register" element={<RegisterPage />} />
+      <Route path="login" element={<LoginPage />} />
     </>,
   ),
 );
