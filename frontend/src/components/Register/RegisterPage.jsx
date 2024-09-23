@@ -20,7 +20,7 @@ const RegisterPage = () => {
   const onSubmit = (data) => {
     console.log(data);
     axios
-      .post(API_URL, data)
+      .post(`${API_URL}/user/auth/register`, data)
       .then(function (response) {
         console.log(response);
         dispatch(setCredentials(data));
