@@ -33,12 +33,13 @@ async function getCoordinates(address) {
  /********************************************/
 
 exports.addHotels = asyncHandler(async (req, res, next) => {
-  const { hotelName, description, address, phone, category, rooms, locationString } = req.body;
+  const { hotelName, description, address, phone, category, rooms,  } = req.body;
 
   console.log(req?.file, "filee path");
   console.log(req?.files, "filee path");
   console.log(req.body);
-  const coordinates = await getCoordinates(locationString);
+  const coordinates = await getCoordinates(address);
+  console.log(coordinates, 'COORDINATES............................')
 
   const hotels = await Hotel.create({
     hotelName,

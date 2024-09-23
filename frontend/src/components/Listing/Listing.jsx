@@ -20,16 +20,20 @@ const Listing = () => {
   console.log(hotels, "Hotels found");
   return (
     <div>
+      <img
+        src="./public/images/uploads/image-1727083877052.jpeg"
+        alt="no image"
+      />
       <div className="container mx-auto">
         <h1 className="text-4xl font-black my-10">All Listings</h1>
         <div className="flex flex-wrap md:flex-nowrap justify-between   gap-5 mt-5">
           {hotels?.map((hotel) => {
+            const path = hotel?.image;
+
+            const hotelImagePath = path?.replace("../frontend/", "");
             return (
               <Card key={hotel?._id}>
-                <img
-                  className="rounded-md"
-                  src="https://a0.muscache.com/im/pictures/ae71d719-bb9b-466d-aa76-c29a1d43afd7.jpg?ml=true&im_w=1200"
-                />
+                <img className="rounded-md" src={`./${hotelImagePath}`} />
 
                 <div className="px-4 py-6">
                   <h1 className="text-xl font-bold">{hotel?.hotelName}</h1>

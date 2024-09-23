@@ -5,12 +5,12 @@ const router = express.Router();
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    cb(null, "../Frontend/hotel-management/public/images/uploads/"); // uploads is the folder name which is in the root directory
+    cb(null, "../frontend/public/images/uploads/"); // uploads is the folder name which is in the root directory
   },
   filename(req, file, cb) {
     cb(
       null,
-      `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
+      `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`,
     );
   },
 });
