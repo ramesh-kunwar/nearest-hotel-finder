@@ -1,15 +1,16 @@
-import React from 'react'
+import React from "react";
 import { Button } from "./components/ui/button";
-import Navbar from './components/Navbar/Navbar';
+import Navbar from "./components/Navbar/Navbar";
+import Listing from "./components/Listing/Listing";
 
 const App = () => {
   return (
     <div className="">
-
       <Navbar />
-      <h1 className='text-6xl'>Hello</h1>
+      <Listing />
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
+
