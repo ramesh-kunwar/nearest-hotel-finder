@@ -20,7 +20,8 @@ function classNames(...classes) {
 
 export default function Navbar() {
   const { userInfo } = useSelector((state) => state.auth);
-  console.log(userInfo, "User info");
+  console.log(userInfo)
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -98,7 +99,7 @@ export default function Navbar() {
                           <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                             {/* profile link */}
                             <Menu.Item>
-                              {userInfo?.user?.role === 1 ? (
+                              {userInfo?.role === 1 ? (
                                 <Link
                                   to={"/admin/dashboard"}
                                   className="block  px-4   py-2 text-sm  hover:bg-slate-300 text-gray-700"

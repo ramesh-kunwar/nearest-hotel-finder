@@ -18,14 +18,14 @@ const LoginPage = () => {
   const { register, handleSubmit } = useForm();
 
   const onSubmit = (data) => {
-    console.log(data);
+    console.log(data, 'hello login');
     axios
       .post(`${API_URL}/user/auth/login`, data, { withCredentials: true })
       // .post(`${API_URL}/user/auth/login`, data)
 
       .then(function (response) {
-        console.log(response);
-        dispatch(setCredentials(response?.data));
+        // console.log(response?.data?.user, 'response from login');
+        dispatch(setCredentials(response?.data?.user));
         console.log("User Logged In Successfully");
         toast.success("User Logged In Successfully");
         navigate("/");

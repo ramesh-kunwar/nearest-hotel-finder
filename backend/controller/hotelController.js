@@ -33,7 +33,7 @@ async function getCoordinates(address) {
  /********************************************/
 
 exports.addHotels = asyncHandler(async (req, res, next) => {
-  const { hotelName, description, address, phone, category, rooms,  } = req.body;
+  const { hotelName, description, address, phone, category, rooms, } = req.body;
 
   console.log(req?.file, "filee path");
   console.log(req?.files, "filee path");
@@ -184,19 +184,17 @@ exports.deleteHotel = asyncHandler(async (req, res, next) => {
  * @method GET
  * @param       {longitude, latitude, distance}
  */
-
-
 exports.findNearestHotel = asyncHandler(async (req, res, next) => {
-
-  // return res.status(200).json({
-  //   message: 'Nearby hotels found',
-  // })
   const { userId } = req.params; // Expecting user ID from route parameters
+  // const { rangeInKm = 1 } = req.query; // Get range from query params or default to 1 km
+  const rangeInKm = 2; // Default range to 1 km
+  // Convert range to meters
+  const rangeInMeters = rangeInKm * 1000;
 
   // Fetch user by ID
   const user = await User.findById(userId);
   if (!user || !user.location || user.location.coordinates.length < 2) {
-    return res.status(404).json({ message: 'User not found or location not available' });
+    return res.status(404).json({ success: false, message: 'User not found or location not available' });
   }
 
   const userLocation = user.location.coordinates;
@@ -204,36 +202,47 @@ exports.findNearestHotel = asyncHandler(async (req, res, next) => {
   // Fetch all hotels
   const hotels = await Hotel.find();
 
-  // Array to store hotels within 1 km
+  // Array to store nearby hotels
   const nearbyHotels = [];
 
   // Find hotels and calculate distances
   hotels.forEach((hotel) => {
     const hotelLocation = hotel.location.coordinates;
-    const distance = haversine(userLocation, hotelLocation);
 
-    if (distance < 500) { // Check if distance is less than 1 km
+    // Use haversine to calculate distance in meters
+    const distanceInMeters = haversine(userLocation, hotelLocation);
+
+    // Convert distance to kilometers
+    const distanceInKm = (distanceInMeters / 1000);
+
+    // Debugging: Log each distance calculated
+    console.log(`Distance to ${hotel.hotelName}: ${distanceInKm} km`);
+
+    if (distanceInMeters <= rangeInMeters) { // Check if the hotel is within the specified range
       nearbyHotels.push({
         hotel,
-        distance,
+        distanceInKm,
       });
     }
   });
 
   if (nearbyHotels.length > 0) {
     // Sort by distance if needed
-    nearbyHotels.sort((a, b) => a.distance - b.distance);
+    nearbyHotels.sort((a, b) => a.distanceInKm - b.distanceInKm);
 
     res.status(200).json({
+      success: true,
       length: nearbyHotels.length,
-
-      hotels: nearbyHotels,
+      hotels: nearbyHotels.map((entry) => ({
+        ...entry.hotel._doc, // Spread hotel properties from the document
+        distance: `${entry.distanceInKm.toFixed(2)} km away`, // Append actual distance and format to 2 decimal places
+      })),
     });
   } else {
-    res.status(404).json({ message: 'No hotels found within 1 km' });
+    res.status(404).json({ success: false, message: `No hotels found within ${rangeInKm} km` });
   }
-
 });
+
 
 
 

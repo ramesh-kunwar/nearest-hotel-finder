@@ -26,7 +26,7 @@ router.put("/:hotelId", updateHotel);
 
 router.get("/nearest", getHotels);
 
-router.get("/nearest-hotel/:userId", isLoggedIn, findNearestHotel);
+router.get("/nearest-hotel/:userId", isLoggedIn,  findNearestHotel);
 
 // rooms
 router.post("/:hotelId/rooms", upload.array("image", 10), addRooms);

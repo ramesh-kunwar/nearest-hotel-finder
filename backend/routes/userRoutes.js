@@ -39,7 +39,7 @@ router.get("/", isLoggedIn, isAdmin,getAllUsers);
 //   }
 // );
 
-router.get("/:id", isLoggedIn, getSingleUser);
+router.get("/:id",  getSingleUser);
 router.get("/:id/profile", isLoggedIn,  getUserProfile);
 // router.get("/:id", isLoggedIn, getSingleUser);
 router.post("/forgotPassword", forgotPassword);
