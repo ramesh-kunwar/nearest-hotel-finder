@@ -20,10 +20,6 @@ const Listing = () => {
   console.log(hotels, "Hotels found");
   return (
     <div>
-      <img
-        src="./public/images/uploads/image-1727083877052.jpeg"
-        alt="no image"
-      />
       <div className="container mx-auto">
         <h1 className="text-4xl font-black my-10">All Listings</h1>
         <div className="flex flex-wrap md:flex-nowrap justify-between   gap-5 mt-5">
@@ -32,20 +28,22 @@ const Listing = () => {
 
             const hotelImagePath = path?.replace("../frontend/", "");
             return (
-              <Card key={hotel?._id}>
-                <img className="rounded-md" src={`./${hotelImagePath}`} />
+              <div key={hotel?._id}>
+                <Card>
+                  <img className="rounded-md" src={`./${hotelImagePath}`} />
 
-                <div className="px-4 py-6">
-                  <h1 className="text-xl font-bold">{hotel?.hotelName}</h1>
-                  <p className="my-2">{hotel?.description}</p>
-                  <Badge
-                    variant={"destructive"}
-                    className={"bg-red-400 text-white"}
-                  >
-                    {hotel?.address}
-                  </Badge>
-                </div>
-              </Card>
+                  <div className="px-4 py-6">
+                    <h1 className="text-xl font-bold">{hotel?.hotelName}</h1>
+                    <p className="my-2">{hotel?.description}</p>
+                    <Badge
+                      variant={"destructive"}
+                      className={"bg-red-400 text-white"}
+                    >
+                      {hotel?.address}
+                    </Badge>
+                  </div>
+                </Card>
+              </div>
             );
           })}
         </div>

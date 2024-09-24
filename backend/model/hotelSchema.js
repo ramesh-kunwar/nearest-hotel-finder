@@ -51,7 +51,8 @@ const hotelSchema = new mongoose.Schema(
     category: {
       type: String,
       // required: true,
-      enum: ["1 star", "2 star", "3 star", "4 star", "5 star"],
+      // enum: ["1 star", "2 star", "3 star", "4 star", "5 star"],
+      enum: ["1 Star", "2 Star", "3 Star", "4 Star", "5 Star"],
     },
   },
   { timestamps: true },

@@ -20,10 +20,12 @@ const LoginPage = () => {
   const onSubmit = (data) => {
     console.log(data);
     axios
-      .post(`${API_URL}/user/auth/login`, data)
+      .post(`${API_URL}/user/auth/login`, data, { withCredentials: true })
+      // .post(`${API_URL}/user/auth/login`, data)
+
       .then(function (response) {
         console.log(response);
-        dispatch(setCredentials(data));
+        dispatch(setCredentials(response?.data));
         console.log("User Logged In Successfully");
         toast.success("User Logged In Successfully");
         navigate("/");

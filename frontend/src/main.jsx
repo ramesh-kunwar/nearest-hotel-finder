@@ -16,6 +16,8 @@ import HomePage from "./components/HomePage/HomePage.jsx";
 
 import { Toaster } from "react-hot-toast";
 import LoginPage from "./components/Login/LoginPage.jsx";
+import Dashboard from "./components/Admin/Dashboard.jsx";
+import AddHotel from "./components/Admin/AddHotel.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -25,6 +27,8 @@ const router = createBrowserRouter(
 
       <Route path="register" element={<RegisterPage />} />
       <Route path="login" element={<LoginPage />} />
+      <Route path="/admin/dashboard" element={<Dashboard />} />
+      <Route path="/admin/addHotel" element={<AddHotel />} />
     </>,
   ),
 );

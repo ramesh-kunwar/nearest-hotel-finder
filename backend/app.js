@@ -32,15 +32,23 @@ app.use(cookieParser());
 
 // app.use(cors());
 
-const corsOptions ={
-  origin:'*', 
-  credentials:true,            //access-control-allow-credentials:true
-  optionSuccessStatus:200,
+const corsOptions = {
+  // origin:'*', 
+  // origin: "http://localhost:5173/",
+  origin: ["http://localhost:5173", "http://example.com", "http://localhost:5174"],
+  credentials: true,            //access-control-allow-credentials:true
+  optionSuccessStatus: 200,
 }
 
-app.use(cors(corsOptions)) 
+app.use(cors(corsOptions))
 
-
+// const cors = require('cors');
+// const corsOptions ={
+//     origin:'http://localhost:3000', 
+//     credentials:true,            //access-control-allow-credentials:true
+//     optionSuccessStatus:200
+// }
+// app.use(cors(corsOptions));
 
 app.use("/api/v1/test", testRoutes);
 app.use("/api/v1/user", userRoutes);
@@ -58,7 +66,7 @@ app.get("/api/v1/demoRoute", isLoggedIn, (req, res) => {
     success: true,
     msg: "Demo rout"
   })
-}); 
+});
 __dirname = path.resolve(); // this
 
 // app.use("/uploads", express.static(path.join(__dirname, "/uploads")));

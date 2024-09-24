@@ -112,12 +112,20 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
     expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
     httpOnly: true,
   };
-  res.cookie("token", token, options).status(200).json({
+  res.cookie("jwt", token, options).status(200).json({
     success: true,
     msg: "Login success",
     user,
     token,
   });
+
+  // res.cookie("token", token, options)
+  // res.status.json({
+  //   success: true,
+  //   msg: "Login success",
+  //   user,
+  //   token,
+  // })
 });
 
 exports.sendOtp = asyncHandler(async (req, res, next) => {
@@ -328,6 +336,8 @@ exports.isLoggedIn = asyncHandler(async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     req.user = await User.findById(decoded.id);
+    console.log(req.user)
+    console.log(req.cookies, 'cookies')
     next();
   } catch (error) {
     // return next(new ErrorResponse(`Not authorized to access this route`, 401));
