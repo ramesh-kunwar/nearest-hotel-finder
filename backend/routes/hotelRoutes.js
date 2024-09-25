@@ -7,6 +7,7 @@ const {
   deleteHotel,
   updateHotel,
   findNearestHotel,
+  getRoomById,
 } = require("../controller/hotelController");
 const upload = require("./uploadRoutes");
 
@@ -20,17 +21,13 @@ router.get("/:hotelId", getHotelById);
 router.delete("/:hotelId", deleteHotel);
 router.put("/:hotelId", updateHotel);
 
-
-
 // find nearest Hotel
 
 router.get("/nearest", getHotels);
 
-router.get("/nearest-hotel/:userId", isLoggedIn,  findNearestHotel);
+router.get("/nearest-hotel/:userId", isLoggedIn, findNearestHotel);
 
 // rooms
 router.post("/:hotelId/rooms", upload.array("image", 10), addRooms);
-
+router.get("/:hotelId/:roomId", getRoomById);
 module.exports = router;
-
-

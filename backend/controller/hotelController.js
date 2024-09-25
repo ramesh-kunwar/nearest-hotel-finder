@@ -5,12 +5,11 @@ const User = require("../model/userSchema");
 const RoomCategory = require("../model/roomCategorySchema");
 const Hotel = require("../model/hotelSchema");
 const Room = require("../model/roomSchema");
-const axios = require('axios');
+const axios = require("axios");
 const haversine = require("../utils/haversine");
 
 // Function to get coordinates from address using OpenCage API
 async function getCoordinates(address) {
-
   const apiKey = process.env.OPEN_CAGE_API_KEY; // Replace with your actual API key
   const url = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(address)}&key=${apiKey}`;
 
@@ -20,9 +19,8 @@ async function getCoordinates(address) {
     const location = response.data.results[0].geometry;
     return [location.lng, location.lat]; // Return coordinates [longitude, latitude]
   }
-  throw new Error('Location not found');
+  throw new Error("Location not found");
 }
-
 
 /********************************************
  *      @description register User
@@ -33,13 +31,13 @@ async function getCoordinates(address) {
  /********************************************/
 
 exports.addHotels = asyncHandler(async (req, res, next) => {
-  const { hotelName, description, address, phone, category, rooms, } = req.body;
+  const { hotelName, description, address, phone, category, rooms } = req.body;
 
   console.log(req?.file, "filee path");
   console.log(req?.files, "filee path");
   console.log(req.body);
   const coordinates = await getCoordinates(address);
-  console.log(coordinates, 'COORDINATES............................')
+  console.log(coordinates, "COORDINATES............................");
 
   const hotels = await Hotel.create({
     hotelName,
@@ -49,9 +47,9 @@ exports.addHotels = asyncHandler(async (req, res, next) => {
     category,
     image: req.file?.path,
     location: {
-      type: 'Point',
+      type: "Point",
       coordinates: coordinates,
-    }
+    },
     // rooms: createdRoom._id,
     // roomCategory: createdRoomCategory._id,
   });
@@ -99,12 +97,12 @@ exports.getHotels = asyncHandler(async (req, res, next) => {
  * @method GET
  * ********************************************/
 exports.getHotelById = asyncHandler(async (req, res, next) => {
-  console.log(req.params, 'get hotel by id params controller')
+  console.log(req.params, "get hotel by id params controller");
   const hotel = await Hotel.findById(req.params.hotelId).populate("rooms");
 
   if (!hotel) {
     return next(
-      new ErrorResponse(`Hotel not found with id of ${req.params.id}`, 404)
+      new ErrorResponse(`Hotel not found with id of ${req.params.id}`, 404),
     );
   }
 
@@ -129,12 +127,12 @@ exports.updateHotel = asyncHandler(async (req, res, next) => {
     {
       new: true,
       runValidators: true,
-    }
+    },
   );
 
   if (!hotel) {
     return next(
-      new ErrorResponse(`Hotel not found with id of ${req.params.id}`, 404)
+      new ErrorResponse(`Hotel not found with id of ${req.params.id}`, 404),
     );
   }
 
@@ -153,12 +151,11 @@ exports.updateHotel = asyncHandler(async (req, res, next) => {
  * ********************************************/
 
 exports.deleteHotel = asyncHandler(async (req, res, next) => {
-
   const hotel = await Hotel.findByIdAndDelete(req.params.hotelId);
-  console.log(hotel, 'hotellllll')
+  console.log(hotel, "hotellllll");
   if (!hotel) {
     return next(
-      new ErrorResponse(`Hotel not found with id of ${req.params.id}`, 404)
+      new ErrorResponse(`Hotel not found with id of ${req.params.id}`, 404),
     );
   }
 
@@ -175,7 +172,6 @@ exports.deleteHotel = asyncHandler(async (req, res, next) => {
  * @method POST
  *
  *******************************************/
-
 
 /**
  * @description find Nearest hotels
@@ -194,7 +190,10 @@ exports.findNearestHotel = asyncHandler(async (req, res, next) => {
   // Fetch user by ID
   const user = await User.findById(userId);
   if (!user || !user.location || user.location.coordinates.length < 2) {
-    return res.status(404).json({ success: false, message: 'User not found or location not available' });
+    return res.status(404).json({
+      success: false,
+      message: "User not found or location not available",
+    });
   }
 
   const userLocation = user.location.coordinates;
@@ -213,12 +212,13 @@ exports.findNearestHotel = asyncHandler(async (req, res, next) => {
     const distanceInMeters = haversine(userLocation, hotelLocation);
 
     // Convert distance to kilometers
-    const distanceInKm = (distanceInMeters / 1000);
+    const distanceInKm = distanceInMeters / 1000;
 
     // Debugging: Log each distance calculated
     console.log(`Distance to ${hotel.hotelName}: ${distanceInKm} km`);
 
-    if (distanceInMeters <= rangeInMeters) { // Check if the hotel is within the specified range
+    if (distanceInMeters <= rangeInMeters) {
+      // Check if the hotel is within the specified range
       nearbyHotels.push({
         hotel,
         distanceInKm,
@@ -239,24 +239,18 @@ exports.findNearestHotel = asyncHandler(async (req, res, next) => {
       })),
     });
   } else {
-    res.status(404).json({ success: false, message: `No hotels found within ${rangeInKm} km` });
+    res.status(404).json({
+      success: false,
+      message: `No hotels found within ${rangeInKm} km`,
+    });
   }
 });
-
-
-
 
 exports.addRooms = asyncHandler(async (req, res, next) => {
   const { roomNumber, availability, roomCategory, price } = req.body;
 
   // const { name, price } = req.body.roomCategory;
 
-  // const createdRoomCategory = await RoomCategory.create({
-  //   roomNumber,
-  //   availability,
-  //   roomCategory,
-  //   price,
-  // });
   // const files = req.files
   const roomImage = req.files.map((file) => file.path);
   // console.log(req.files, "files");
@@ -282,13 +276,18 @@ exports.addRooms = asyncHandler(async (req, res, next) => {
   });
 });
 
-/********************************************
- *  @description get all room categories
- * @route       GET /api/v1/roomCategories
- * @access      Public
- * @method GET
- *
- * ********************************************/
+exports.getRoomById = asyncHandler(async (req, res, next) => {
+  const roomId = req.params.roomId;
+  const hotel = await Hotel.findOne({ _id: req.params.hotelId }).populate(
+    "rooms",
+  );
+
+  const room = hotel.rooms.find((room) => room._id.toString() === roomId);
+  return res.status(200).json({
+    msg: "Room by id",
+    room,
+  });
+});
 
 exports.getRoomCategories = asyncHandler(async (req, res, next) => {
   const roomCategories = await RoomCategory.find();
