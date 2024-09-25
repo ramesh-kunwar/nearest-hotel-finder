@@ -4,6 +4,7 @@ import { Button } from "@headlessui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import BookingForm from "./BookingForm";
 
 const RoomById = () => {
   const { hotelId, roomId } = useParams();
@@ -38,7 +39,7 @@ const RoomById = () => {
 
   // Check if image exists before accessing its first element
   const roomImagePath =
-    image.length > 0 ? image[0].replace("../frontend/", "") : "";
+    image.length > 0 ? image[0].replace("../frontend/public/", "") : "";
 
   console.log(roomImagePath, "room image path");
 
@@ -50,10 +51,7 @@ const RoomById = () => {
           <img src={`/${roomImagePath}`} />
         </div>
         <div>
-          room by id
-          <Button className={"px-6 py-3 bg-blue-700 text-white rounded-md"}>
-            Book Now
-          </Button>
+          <BookingForm room={room} />
           <h1 className="text-xl">{room?.roomNumber}</h1>
         </div>
       </div>

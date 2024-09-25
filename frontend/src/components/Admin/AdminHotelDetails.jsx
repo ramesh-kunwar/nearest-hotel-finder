@@ -45,7 +45,7 @@ const AdminHotelDetails = () => {
 
       <div className="my-10">
         <Button className="bg-green-600 text-white">
-          <Link to="/admin/dashboard"> Add Rooms</Link>
+          <Link to={`/admin/hotels/${hotelId}/rooms`}> Add Rooms</Link>
         </Button>
       </div>
 
