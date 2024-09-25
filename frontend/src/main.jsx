@@ -19,10 +19,12 @@ import LoginPage from "./components/Login/LoginPage.jsx";
 import Dashboard from "./components/Admin/Dashboard.jsx";
 import AddHotel from "./components/Admin/AddHotel.jsx";
 import ListingById from "./components/Listing/ListingById.jsx";
-import Navbar from "./components/Navbar/Navbar.jsx";
 import AdminRoute from "./components/AdminRoute.jsx";
 import PrivateRoute from "./components/PrivateRoute.jsx";
 import NearestListing from "./components/Listing/NearestListing.jsx";
+import AdminHotelDetails from "./components/Admin/AdminHotelDetails.jsx";
+import AddRooms from "./components/Admin/AddRooms.jsx";
+import RoomById from "./components/Listing/rooms/RoomById.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -31,11 +33,10 @@ const router = createBrowserRouter(
 
       <Route path="/" index={true} element={<HomePage />} />
       <Route path="/hotel/:hotelId" element={<ListingById />} />
+      <Route path="/hotel/:hotelId/:roomId" element={<RoomById />} />
 
-      <Route path="" element={<PrivateRoute />} >
-      
-      <Route path="/nearest" element={<NearestListing />} />
-      
+      <Route path="" element={<PrivateRoute />}>
+        <Route path="/nearest" element={<NearestListing />} />
       </Route>
 
       <Route path="register" element={<RegisterPage />} />
@@ -43,6 +44,8 @@ const router = createBrowserRouter(
       <Route path="" element={<AdminRoute />}>
         <Route path="/admin/dashboard" element={<Dashboard />} />
         <Route path="/admin/addHotel" element={<AddHotel />} />
+        <Route path="/admin/hotels/:hotelId" element={<AdminHotelDetails />} />
+        <Route path="/admin/hotels/:hotelId/rooms" element={<AddRooms />} />
       </Route>
     </>,
   ),

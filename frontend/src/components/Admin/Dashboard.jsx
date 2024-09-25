@@ -13,6 +13,7 @@ import axios from "axios";
 import { API_URL } from "@/constants/constants";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 const Dashboard = () => {
   const [hotels, setHotels] = useState([{}]);
@@ -29,9 +30,28 @@ const Dashboard = () => {
       });
   }, []);
   console.log(hotels, "hotels from admin");
+
+  const handleDelete = (hotel) => {
+    console.log(hotel);
+    console.log("Delte handdler");
+
+    axios
+
+      .delete(`${API_URL}/hotels/${hotel._id} `, { withCredentials: true })
+      .then(() => {
+        setHotels((prevHotels) =>
+          prevHotels.filter((h) => h._id !== hotel._id),
+        );
+        toast.success("Hotel Deleted Successfully");
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("Error while deleting hotel");
+      });
+  };
   return (
     <div className="container  mx-auto my-3">
-      <h1 className="text-4xl font-bold my-5"> Admin Dashboard</h1>
+      <h1 className="text-4xl font-bold my-5"> Available Hotels</h1>
 
       <Button className="bg-green-400 my-10">
         <Link to={"/admin/addHotel"}> Add Hotel</Link>
@@ -51,14 +71,22 @@ const Dashboard = () => {
           {hotels?.map((hotel) => {
             return (
               <TableRow key={Math.random()}>
-                <TableCell className="">{hotel?._id}</TableCell>
+                <TableCell className="">
+                  <Link to={`/admin/hotels/${hotel?._id}`}>{hotel?._id}</Link>
+                </TableCell>
                 <TableCell>{hotel?.hotelName}</TableCell>
                 <TableCell>{hotel?.category}</TableCell>
                 <TableCell>{hotel?.phone}</TableCell>
                 <TableCell>{hotel?.address}</TableCell>
                 <TableCell className="flex  items-center gap-2">
                   <Button className="bg-blue-500 text-white">Update</Button>
-                  <Button className="bg-red-500 text-white"> Delete</Button>
+                  <Button
+                    className="bg-red-500 text-white"
+                    onClick={() => handleDelete(hotel)}
+                  >
+                    {" "}
+                    Delete
+                  </Button>
                 </TableCell>
               </TableRow>
             );
