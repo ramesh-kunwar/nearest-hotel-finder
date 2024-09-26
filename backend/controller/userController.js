@@ -128,6 +128,16 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
   // })
 });
 
+exports.logoutUser = asyncHandler(async (req, res, next) => {
+  res.cookie("jwt", null, { expiresIn: Date.now() });
+  res.clearCookie("jwt", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+    path: "/",
+  });
+});
+
 exports.sendOtp = asyncHandler(async (req, res, next) => {
   const { email } = req.body;
   if (!email) {
@@ -336,7 +346,7 @@ exports.isLoggedIn = asyncHandler(async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     req.user = await User.findById(decoded.id);
-    console.log(req.cookies, 'cookies')
+    console.log(req.cookies, "cookies");
     next();
   } catch (error) {
     // return next(new ErrorResponse(`Not authorized to access this route`, 401));

@@ -7,7 +7,7 @@ const {
   sendOtp,
   getAllUsers,
   getSingleUser,
-
+  logoutUser,
   forgotPassword,
   resetPassword,
   getUserProfile,
@@ -21,11 +21,12 @@ const router = express.Router();
 
 router.post("/auth/register", registerUser);
 router.post("/auth/login", loginUser);
+router.get("/auth/logout", logoutUser);
 router.post("/auth/sendOtp", sendOtp);
 router.get("/auth/verify/:token", verifyUser);
 // router.get("/", isAdmin, getAllUsers);
 // router.get("/", isLoggedIn, isAdmin, getAllUsers);
-router.get("/", isLoggedIn, isAdmin,getAllUsers);
+router.get("/", isLoggedIn, isAdmin, getAllUsers);
 // router.get("/",  getAllUsers);
 
 // router.get(
@@ -39,8 +40,8 @@ router.get("/", isLoggedIn, isAdmin,getAllUsers);
 //   }
 // );
 
-router.get("/:id",  getSingleUser);
-router.get("/:id/profile", isLoggedIn,  getUserProfile);
+router.get("/:id", getSingleUser);
+router.get("/:id/profile", isLoggedIn, getUserProfile);
 // router.get("/:id", isLoggedIn, getSingleUser);
 router.post("/forgotPassword", forgotPassword);
 router.post("/resetPassword/:token", resetPassword);

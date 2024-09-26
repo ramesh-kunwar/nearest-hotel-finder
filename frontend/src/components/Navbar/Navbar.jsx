@@ -3,6 +3,10 @@ import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { API_URL } from "@/constants/constants";
+import toast from "react-hot-toast";
+import { logoutUserSlice } from "@/slices/authSlice";
 //import { logout } from "../../slices/authSlice";
 
 const user = {
@@ -20,13 +24,24 @@ function classNames(...classes) {
 
 export default function Navbar() {
   const { userInfo } = useSelector((state) => state.auth);
-  console.log(userInfo)
+  console.log(userInfo);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handleLogout = async () => {
-    console.log("logout");
+    localStorage.removeItem("userInfo");
+
+    await axios
+      .get(`${API_URL}/user/auth/logout`)
+      .then(() => {
+        console.log("user Logged out successfully");
+        toast.success("User logged out successfully");
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("User Logout Failed");
+      });
     // try {
     //   await logoutApiCall().unwrap();
     //   dispatch(logout());
@@ -118,7 +133,7 @@ export default function Navbar() {
                             {/* logout link */}
                             <Menu.Item>
                               <Link
-                                to={"/logout"}
+                                to={"/login"}
                                 onClick={handleLogout}
                                 className="block px-4 py-2 text-sm hover:bg-slate-100 text-gray-700"
                               >
