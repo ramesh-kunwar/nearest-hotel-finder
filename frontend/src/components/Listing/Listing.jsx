@@ -40,9 +40,7 @@ const Listing = () => {
                       />
                     </div>
                     <div className="px-4 py-2">
-                      <h1 className="text-md font-medium">
-                        {hotel?.hotelName}
-                      </h1>
+                      <h1 className="text-md font-bold">{hotel?.hotelName}</h1>
                       <p className="my-2 font-light text-gray-600 flex items-center gap-2 ">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"

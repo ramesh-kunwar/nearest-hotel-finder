@@ -25,6 +25,7 @@ import NearestListing from "./components/Listing/NearestListing.jsx";
 import AdminHotelDetails from "./components/Admin/AdminHotelDetails.jsx";
 import AddRooms from "./components/Admin/AddRooms.jsx";
 import RoomById from "./components/Listing/rooms/RoomById.jsx";
+import Profile from "./components/Profile/Profile.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -37,6 +38,7 @@ const router = createBrowserRouter(
 
       <Route path="" element={<PrivateRoute />}>
         <Route path="/nearest" element={<NearestListing />} />
+        <Route path="/profile" element={<Profile />} />
       </Route>
 
       <Route path="register" element={<RegisterPage />} />
