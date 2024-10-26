@@ -14,6 +14,7 @@ import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
+import EditRooms from "./EditRooms";
 const AdminHotelDetails = () => {
   const { hotelId } = useParams();
   const [hotel, setHotel] = useState("");
@@ -23,13 +24,19 @@ const AdminHotelDetails = () => {
     });
   }, []);
 
-  const handleEdit = (rooms) => {
-    console.log("handle edit");
-  };
-
   const handleDelete = (rooms) => {
     console.log("handle delete:width: ,");
   };
+
+  const handleRoomUpdate = (updatedRoom) => {
+    setHotel(prevHotel => ({
+      ...prevHotel,
+      rooms: prevHotel.rooms.map(room => 
+        room._id === updatedRoom._id ? updatedRoom : room
+      )
+    }));
+  };
+
   console.log(hotel, "From hotel");
   return (
     <div className="container mx-auto my-8">
@@ -62,24 +69,6 @@ const AdminHotelDetails = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow>
-            <TableCell>101</TableCell>
-            <TableCell>101</TableCell>
-            <TableCell>Deluxe</TableCell>
-            <TableCell>$100/night</TableCell>
-            <TableCell>Ramesh Kunwar</TableCell>
-            <TableCell>Available</TableCell>
-            <TableCell>
-              <div className="flex gap-3 items-center">
-                <Button onClick={handleEdit} className="bg-yellow-400">
-                  Edit
-                </Button>
-                <Button onClick={handleDelete} className="bg-red-500">
-                  Delete
-                </Button>
-              </div>
-            </TableCell>
-          </TableRow>
           {hotel?.rooms?.map((room) => {
             console.log(room);
             return (
@@ -94,9 +83,9 @@ const AdminHotelDetails = () => {
                 <TableCell>{room?.availability.toUpperCase()}</TableCell>
                 <TableCell className="flex  items-center gap-2">
                   <div className="flex gap-3 items-center">
-                    <Button onClick={handleEdit} className="bg-yellow-400">
-                      Edit
-                    </Button>
+                    {/* <EditRooms /> */}
+                    <EditRooms room={room} onUpdate={handleRoomUpdate} />
+
                     <Button onClick={handleDelete} className="bg-red-500">
                       Delete
                     </Button>

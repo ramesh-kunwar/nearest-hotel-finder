@@ -8,6 +8,7 @@ const {
   updateHotel,
   findNearestHotel,
   getRoomById,
+  editRoom,
 } = require("../controller/hotelController");
 const upload = require("./uploadRoutes");
 
@@ -30,4 +31,5 @@ router.get("/nearest-hotel/:userId", isLoggedIn, findNearestHotel);
 // rooms
 router.post("/:hotelId/rooms", upload.array("image", 10), addRooms);
 router.get("/:hotelId/:roomId", getRoomById);
+router.put("/:hotelId/:roomId", editRoom)
 module.exports = router;

@@ -42,19 +42,11 @@ export default function Navbar() {
         console.log(error);
         toast.error("User Logout Failed");
       });
-    // try {
-    //   await logoutApiCall().unwrap();
-    //   dispatch(logout());
-    //   navigate("/login");
-    //   toast.success("Logout Successful");
-    // } catch (error) {
-    //   console.log(error);
-    // }
   };
   return (
     <>
       <div className="min-h-full  bg-gray-100">
-        <Disclosure as="nav" className=" container mx-auto">
+        <Disclosure as="nav" className="max-w-6xl container mx-auto">
           {({ open }) => (
             <>
               <div className="mx-auto  px-4 sm:px-6 lg:px-8">

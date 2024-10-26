@@ -26,6 +26,8 @@ import AdminHotelDetails from "./components/Admin/AdminHotelDetails.jsx";
 import AddRooms from "./components/Admin/AddRooms.jsx";
 import RoomById from "./components/Listing/rooms/RoomById.jsx";
 import Profile from "./components/Profile/Profile.jsx";
+import UpdateHotel from "./components/Admin/UpdateHotel.jsx";
+import EditRooms from "./components/Admin/EditRooms.jsx";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -46,8 +48,10 @@ const router = createBrowserRouter(
       <Route path="" element={<AdminRoute />}>
         <Route path="/admin/dashboard" element={<Dashboard />} />
         <Route path="/admin/addHotel" element={<AddHotel />} />
+        <Route path="/admin/hotels/:hotelId/update" element={<UpdateHotel />} />
         <Route path="/admin/hotels/:hotelId" element={<AdminHotelDetails />} />
         <Route path="/admin/hotels/:hotelId/rooms" element={<AddRooms />} />
+        <Route path="/admin/hotels/:hotelId/rooms/:roomId" element={<EditRooms />} />
       </Route>
     </>,
   ),

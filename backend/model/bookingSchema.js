@@ -17,16 +17,16 @@ const bookingSchema = new mongoose.Schema(
     //   ref: "RoomCategory",
     //   required: true,
     // },
-    
+
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      // required: true,
-    },
-    noOfGuests: {
-      type: Number,
       required: true,
     },
+    // noOfGuests: {
+    //   type: Number,
+    //   required: true,
+    // },
     checkIn: {
       type: Date,
       required: true,

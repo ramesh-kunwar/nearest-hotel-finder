@@ -26,7 +26,7 @@ router.post("/auth/sendOtp", sendOtp);
 router.get("/auth/verify/:token", verifyUser);
 // router.get("/", isAdmin, getAllUsers);
 // router.get("/", isLoggedIn, isAdmin, getAllUsers);
-router.get("/", isLoggedIn, isAdmin, getAllUsers);
+router.get("/", getAllUsers);
 // router.get("/",  getAllUsers);
 
 // router.get(

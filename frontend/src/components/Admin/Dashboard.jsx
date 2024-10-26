@@ -79,13 +79,20 @@ const Dashboard = () => {
                 <TableCell>{hotel?.phone}</TableCell>
                 <TableCell>{hotel?.address}</TableCell>
                 <TableCell className="flex  items-center gap-2">
-                  <Button className="bg-blue-500 text-white">Update</Button>
+                  <Button className="bg-blue-500 text-white">
+                    <Link to={`/admin/hotels/${hotel?._id}/update`}>
+                      Update
+                    </Link>
+                  </Button>
                   <Button
                     className="bg-red-500 text-white"
                     onClick={() => handleDelete(hotel)}
                   >
                     {" "}
                     Delete
+                  </Button>
+                  <Button className="bg-green-500 text-white">
+                    <Link to={`/admin/hotels/${hotel?._id}/`}>Add Room</Link>
                   </Button>
                 </TableCell>
               </TableRow>

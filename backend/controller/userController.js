@@ -130,11 +130,8 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
 
 exports.logoutUser = asyncHandler(async (req, res, next) => {
   res.cookie("jwt", null, { expiresIn: Date.now() });
-  res.clearCookie("jwt", {
-    httpOnly: true,
-    secure: true,
-    sameSite: "lax",
-    path: "/",
+  return res.status(200).json({
+    msg: "User logged out succesfuly",
   });
 });
 
