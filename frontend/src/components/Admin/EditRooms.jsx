@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
@@ -20,10 +20,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Input } from "../ui/input";
 
 const EditRooms = ({ room, onUpdate }) => {
   const [open, setOpen] = useState(false);
   const [availability, setAvailability] = useState(room.availability);
+  const [price, setPrice] = useState(room.price);
+  const [roomCategory, setRoomCategory] = useState(room.roomCategory);
   const [isLoading, setIsLoading] = useState(false);
   const { hotelId } = useParams();
   console.log(hotelId, "-----------------hotelId-----------------");
@@ -35,10 +38,8 @@ const EditRooms = ({ room, onUpdate }) => {
 
     try {
       const response = await axios.put(
-        // `localhot:/api/v1/hotels/${hotelId}/rooms/${room._id}/update`,
         `${API_URL}/hotels/${hotelId}/${room?._id}/update`,
-
-        { availability },
+        { availability, price, roomCategory },
         {
           withCredentials: true,
           headers: {
@@ -70,10 +71,12 @@ const EditRooms = ({ room, onUpdate }) => {
     (newOpen) => {
       if (!newOpen) {
         setAvailability(room.availability); // Reset form on close
+        setPrice(room.price);
+        setRoomCategory(room.roomCategory);
       }
       setOpen(newOpen);
     },
-    [room.availability],
+    [room.availability, room.price, room.roomCategory],
   );
 
   return (
@@ -88,7 +91,8 @@ const EditRooms = ({ room, onUpdate }) => {
         <DialogDescription>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">
+              {/*  */}
+              <div className="grid grid-cols-4 items-center gap-4 justify-between">
                 <Label htmlFor="availability" className="text-right">
                   Availability
                 </Label>
@@ -109,6 +113,47 @@ const EditRooms = ({ room, onUpdate }) => {
                   </Select>
                 </div>
               </div>
+              {/*  */}
+              {/*  */}
+              <div className="grid grid-cols-4 items-center gap-4 justify-between">
+                <Label htmlFor="price" className="text-right">
+                  Price
+                </Label>
+                <div className="col-span-3">
+                  <Input
+                    type="number"
+                    value={price}
+                    onChange={(e) => setPrice(Number(e.target.value))}
+                  />
+                </div>
+              </div>
+              {/*  */}
+              {/*  */}
+              <div className="grid grid-cols-4 items-center gap-4 justify-between">
+                <Label htmlFor="category" className="text-right">
+                  Category
+                </Label>
+                <div className="col-span-3">
+                  <Select
+                    value={roomCategory}
+                    onValueChange={setRoomCategory}
+                    disabled={isLoading}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select availability" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="single">Single</SelectItem>
+                      <SelectItem value="double">Double</SelectItem>
+                      <SelectItem value="deluxe">Deluxe</SelectItem>
+                      <SelectItem value="supreme deluxe">
+                        Supreme Deluxe
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              {/*  */}
             </div>
             <div className="flex justify-end gap-3">
               <Button
