@@ -39,7 +39,7 @@ const haversine = require("../utils/haversine");
 async function getCoordinates(address) {
   const apiKey = process.env.OPEN_CAGE_API_KEY; // Replace with your actual API key
   const url = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(
-    address
+    address,
   )}&key=${apiKey}`;
 
   const response = await axios.get(url);
@@ -132,7 +132,7 @@ exports.getHotelById = asyncHandler(async (req, res, next) => {
 
   if (!hotel) {
     return next(
-      new ErrorResponse(`Hotel not found with id of ${req.params.id}`, 404)
+      new ErrorResponse(`Hotel not found with id of ${req.params.id}`, 404),
     );
   }
 
@@ -157,12 +157,12 @@ exports.updateHotel = asyncHandler(async (req, res, next) => {
     {
       new: true,
       runValidators: true,
-    }
+    },
   );
 
   if (!hotel) {
     return next(
-      new ErrorResponse(`Hotel not found with id of ${req.params.id}`, 404)
+      new ErrorResponse(`Hotel not found with id of ${req.params.id}`, 404),
     );
   }
 
@@ -185,7 +185,7 @@ exports.deleteHotel = asyncHandler(async (req, res, next) => {
   console.log(hotel, "hotellllll");
   if (!hotel) {
     return next(
-      new ErrorResponse(`Hotel not found with id of ${req.params.id}`, 404)
+      new ErrorResponse(`Hotel not found with id of ${req.params.id}`, 404),
     );
   }
 
@@ -306,9 +306,53 @@ exports.addRooms = asyncHandler(async (req, res, next) => {
   });
 });
 
+// exports.editRoom = asyncHandler(async (req, res, next) => {
+//   const { roomId } = req.params;
+//   const { availability } = req.body;
+
+//   // Validate the new availability status
+//   const validStatuses = ["checked", "booked", "available"];
+//   if (!validStatuses.includes(availability)) {
+//     return res.status(400).json({
+//       success: false,
+//       message:
+//         "Invalid availability status. Must be 'checked', 'booked', or 'available'.",
+//     });
+//   }
+
+//   try {
+//     // Find the room and update its availability
+//     const updatedRoom = await Room.findByIdAndUpdate(
+//       roomId,
+//       { availability },
+//       { new: true, runValidators: true },
+//     );
+
+//     if (!updatedRoom) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Room not found",
+//       });
+//     }
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Room status updated successfully",
+//       room: updatedRoom,
+//     });
+//   } catch (error) {
+//     console.error("Error updating room status:", error);
+//     res.status(500).json({
+//       success: false,
+//       // message: "An error occurred while updating the room status",
+//       message: error.message,
+//     });
+//   }
+// });
+
 exports.editRoom = asyncHandler(async (req, res, next) => {
-  const { roomId } = req.params;
-  const { availability } = req.body;
+  const { roomId, hotelId } = req.params; // Include hotelId in params
+  const { availability, price, roomNumber, roomCategory } = req.body;
 
   // Validate the new availability status
   const validStatuses = ["checked", "booked", "available"];
@@ -321,17 +365,50 @@ exports.editRoom = asyncHandler(async (req, res, next) => {
   }
 
   try {
-    // Find the room and update its availability
-    const updatedRoom = await Room.findByIdAndUpdate(
-      roomId,
-      { availability },
-      { new: true, runValidators: true }
-    );
+    // Find the room and ensure it belongs to the specified hotel
+    // const updatedRoom = await Room.findOneAndUpdate(
+    //   { _id: roomId, hotel: hotelId }, // Add hotel check
+    //   { availability },
+    //   { new: true, runValidators: true },
+    // );
+    //
 
-    if (!updatedRoom) {
+    const foundHotel = await Hotel.findOne({ _id: hotelId }).populate("rooms");
+    if (!foundHotel) {
       return res.status(404).json({
         success: false,
-        message: "Room not found",
+        message: "Room not found or doesn't belong to the specified hotel",
+      });
+    }
+
+    // find room in hotel if it matches the hotelId
+    const foundRoom = foundHotel.rooms.find((room) => room._id == roomId);
+
+    // console.log(foundHotel);
+
+    // return res.status(200).json({
+    //   data: foundRoom,
+    //   // data: foundHotel,
+    //   hotelId: hotelId,
+    //   roomId: roomId,
+    // });
+
+    const updatedRoom = await Room.findOneAndUpdate(
+      // { _id: roomId, hotel: hotelId }, // Add hotel check
+      { _id: foundRoom._id },
+      {
+        availability,
+        price,
+        roomNumber,
+        roomCategory,
+      },
+      { new: true, runValidators: true },
+    );
+
+    if (!foundRoom) {
+      return res.status(404).json({
+        success: false,
+        message: "Room not found or doesn't belong to the specified hotel",
       });
     }
 
@@ -341,18 +418,14 @@ exports.editRoom = asyncHandler(async (req, res, next) => {
       room: updatedRoom,
     });
   } catch (error) {
-    console.error("Error updating room status:", error);
-    res.status(500).json({
-      success: false,
-      message: "An error occurred while updating the room status",
-    });
+    next(new Error(`Error updating room status: ${error.message}`));
   }
 });
 
 exports.getRoomById = asyncHandler(async (req, res, next) => {
   const roomId = req.params.roomId;
   const hotel = await Hotel.findOne({ _id: req.params.hotelId }).populate(
-    "rooms"
+    "rooms",
   );
 
   const room = hotel.rooms.find((room) => room._id.toString() === roomId);

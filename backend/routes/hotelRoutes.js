@@ -31,5 +31,5 @@ router.get("/nearest-hotel/:userId", isLoggedIn, findNearestHotel);
 // rooms
 router.post("/:hotelId/rooms", upload.array("image", 10), addRooms);
 router.get("/:hotelId/:roomId", getRoomById);
-router.put("/:hotelId/:roomId", editRoom)
+router.put("/:hotelId/:roomId/update", editRoom);
 module.exports = router;
