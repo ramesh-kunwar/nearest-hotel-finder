@@ -78,12 +78,15 @@ const Dashboard = () => {
                 <TableCell>{hotel?.category}</TableCell>
                 <TableCell>{hotel?.phone}</TableCell>
                 <TableCell>{hotel?.address}</TableCell>
+                
                 <TableCell className="flex  items-center gap-2">
-                  <Button className="bg-blue-500 text-white">
+                {/*  <Button className="bg-blue-500 text-white">
                     <Link to={`/admin/hotels/${hotel?._id}/update`}>
                       Update
                     </Link>
                   </Button>
+
+                   */}
                   <Button
                     className="bg-red-500 text-white"
                     onClick={() => handleDelete(hotel)}
