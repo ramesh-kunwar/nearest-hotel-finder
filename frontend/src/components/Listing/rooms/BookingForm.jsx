@@ -88,7 +88,11 @@ const BookingForm = ({ room }) => {
     <div>
       <form onSubmit={submitHandler}>
         <Label className="my-5">When Do You Want To Book A Room</Label>
-        <Datepicker value={value} onChange={handleChange} />
+        <Datepicker
+          value={value}
+          onChange={handleChange}
+          minDate={new Date()} // Disables all dates before today
+        />
 
         <div className="mt-10">
           <div className="mb-3">
