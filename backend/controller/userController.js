@@ -25,7 +25,7 @@ async function getCoordinates(address) {
     const location = response.data.results[0].geometry;
 
     // Check if the result is in Nepal
-    const isInNepal = response.data.results[0].components.country === 'Nepal';
+    const isInNepal = response.data.results[0].components.country === "Nepal";
     if (!isInNepal) {
       throw new Error("Address is not within Nepal");
     }
@@ -35,7 +35,6 @@ async function getCoordinates(address) {
   throw new Error("Location not found");
 }
 
-
 /********************************************
  *      @description register User
  *      @route       POST /api/v1/auth/register
@@ -44,7 +43,7 @@ async function getCoordinates(address) {
  *      @method POST
  /********************************************/
 
- exports.registerUser = asyncHandler(async (req, res, next) => {
+exports.registerUser = asyncHandler(async (req, res, next) => {
   const { name, email, password, phoneNumber, address } = req.body;
 
   if (!name || !email || !password || !address) {
@@ -86,7 +85,6 @@ async function getCoordinates(address) {
   }
 });
 
-
 /********************************************
  *      @description login User
  *      @route       POST /api/v1/auth/login
@@ -121,7 +119,7 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
     process.env.JWT_SECRET,
     {
       expiresIn: "3d",
-    },
+    }
   );
 
   user.password = undefined;
@@ -262,6 +260,70 @@ exports.getUserProfile = asyncHandler(async (req, res, next) => {
   if (!user) {
     throw new ErrorResponse("User not found", 400);
   }
+  res.status(200).json({
+    success: true,
+    data: user,
+  });
+});
+
+// exports.updateUserProfile = asyncHandler(async (req, res, next) => {
+//   const user = await User.findById(req.user._id);
+// console.log(req.user, "----------------------------------------------------------------")
+//   if (!user) {
+//     throw new ErrorResponse("User not found", 400);
+//   }
+
+//   const { name, email, phoneNumber, address } = req.body;
+
+//   if (name) user.name = name;
+//   if (email) user.email = email;
+//   if (phoneNumber) user.phoneNumber = phoneNumber;
+//   if (address) user.address = address;
+
+//   await user.save();
+
+//   res.status(200).json({
+//     success: true,
+//     data: user,
+//   });
+// });
+
+exports.updateUserProfile = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+
+  console.log(
+    req.user,
+    "----------------------------------------------------------------"
+  );
+  if (!user) {
+    throw new ErrorResponse("User not found", 400);
+  }
+
+  const { name, email, phoneNumber, address } = req.body;
+
+  if (name) user.name = name;
+  if (email) user.email = email;
+  if (phoneNumber) user.phoneNumber = phoneNumber;
+
+  if (address) {
+    user.address = address;
+    try {
+      // Update coordinates based on the new address
+      const coordinates = await getCoordinates(address);
+      user.location = {
+        type: "Point",
+        coordinates: coordinates, // [longitude, latitude]
+      };
+    } catch (error) {
+      throw new ErrorResponse(
+        `Failed to update coordinates: ${error.message}`,
+        400
+      );
+    }
+  }
+
+  await user.save();
+
   res.status(200).json({
     success: true,
     data: user,

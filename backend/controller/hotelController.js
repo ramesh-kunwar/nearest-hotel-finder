@@ -273,6 +273,8 @@ exports.findNearestHotel = asyncHandler(async (req, res, next) => {
   }
 });
 
+
+
 exports.addRooms = asyncHandler(async (req, res, next) => {
   const { roomNumber, availability, roomCategory, price } = req.body;
 

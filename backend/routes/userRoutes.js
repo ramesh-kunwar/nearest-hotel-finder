@@ -13,6 +13,8 @@ const {
   getUserProfile,
   isLoggedIn,
   isAdmin,
+  updateProfile,
+  updateUserProfile,
   // sendOTP,
 } = require("../controller/userController");
 const { expressjwt } = require("express-jwt");
@@ -42,6 +44,10 @@ router.get("/", getAllUsers);
 
 router.get("/:id", getSingleUser);
 router.get("/:id/profile", isLoggedIn, getUserProfile);
+// router.put("/auth/update-profile", isLoggedIn, updateProfile); // New route for updating profile
+// router.put("/auth/update-profile", isLoggedIn, updateProfile); // Update profile (New Route)
+router.put("/:id/update-profile", isLoggedIn, updateUserProfile); // Update user profile or location (New Route)
+
 // router.get("/:id", isLoggedIn, getSingleUser);
 router.post("/forgotPassword", forgotPassword);
 router.post("/resetPassword/:token", resetPassword);

@@ -6,12 +6,11 @@ import axios from "axios";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import Datepicker from "react-tailwindcss-datepicker";
-import { differenceInDays } from "date-fns"; // Add this import
+import { differenceInDays } from "date-fns";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 
 const BookingForm = ({ room }) => {
-  console.log(room);
   const { userInfo } = useSelector((state) => state.auth);
   const hotelId = useParams().hotelId;
   const roomId = useParams().roomId;
@@ -23,25 +22,35 @@ const BookingForm = ({ room }) => {
 
   const [bookingDetails, setBookingDetails] = useState({
     numberOfDays: 0,
+    totalPrice: 0,
     roomCategory: room?.roomCategory || "",
   });
 
-  const [bookingSuccess, setBookingSuccess] = useState(false); // State to track booking success
-  const [errorMessage, setErrorMessage] = useState(""); // State to track any errors
+  const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange = (newValue) => {
     setValue(newValue);
-    console.log(newValue);
 
-    // Calculate the number of days
+    // Calculate the number of days and total price
     if (newValue.startDate && newValue.endDate) {
       const start = new Date(newValue.startDate);
       const end = new Date(newValue.endDate);
       const numberOfDays = differenceInDays(end, start);
 
+      const totalPrice = Number(room.price) * numberOfDays;
+
       setBookingDetails((prevDetails) => ({
         ...prevDetails,
-        numberOfDays: numberOfDays,
+        numberOfDays,
+        totalPrice,
+      }));
+    } else {
+      // Reset details if dates are cleared
+      setBookingDetails((prevDetails) => ({
+        ...prevDetails,
+        numberOfDays: 0,
+        totalPrice: 0,
       }));
     }
   };
@@ -54,7 +63,7 @@ const BookingForm = ({ room }) => {
         checkIn: new Date(value.startDate).toISOString(),
         checkOut: new Date(value.endDate).toISOString(),
         user: userInfo._id,
-        amount: Number(room.price) * bookingDetails.numberOfDays,
+        amount: bookingDetails.totalPrice,
         room: roomId,
       };
 
@@ -68,7 +77,6 @@ const BookingForm = ({ room }) => {
         },
       });
 
-      console.log(response);
       setBookingSuccess(true);
       setErrorMessage("");
       toast.success("Hotel Booked Successfully");
@@ -84,6 +92,7 @@ const BookingForm = ({ room }) => {
       }
     }
   };
+
   return (
     <div>
       <form onSubmit={submitHandler}>
@@ -91,7 +100,7 @@ const BookingForm = ({ room }) => {
         <Datepicker
           value={value}
           onChange={handleChange}
-          minDate={new Date()} // Disables all dates before today
+          minDate={new Date()} // Disable past dates
         />
 
         <div className="mt-10">
@@ -104,15 +113,17 @@ const BookingForm = ({ room }) => {
               className="w-full"
             />
           </div>
+
           <div className="mb-3">
-            <Label className="mb-2">Room Category</Label>
+            <Label className="mb-2">Total Price</Label>
             <Input
               type="text"
               disabled
-              value={room.roomCategory}
-              className="w-full text-black"
+              value={`Rs.${bookingDetails.totalPrice.toFixed(2) || "0.00"}`}
+              className="w-full"
             />
           </div>
+
           <Button
             type="submit"
             className={`px-6 py-3 text-white rounded-md ${
