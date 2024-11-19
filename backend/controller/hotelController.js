@@ -8,44 +8,24 @@ const Room = require("../model/roomSchema");
 const axios = require("axios");
 const haversine = require("../utils/haversine");
 
-// Function to get coordinates from address using OpenCage API
-// async function getCoordinates(address) {
-//   const apiKey = process.env.OPEN_CAGE_API_KEY; // Replace with your actual API key
-//   const url = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(
-//     address
-//   )}&key=${apiKey}`;
-
-//   const response = await axios.get(url);
-
-//   if (response.data.results.length > 0) {
-//     // Filter results for exact matches based on the formatted address
-//     const exactMatch = response.data.results.find((result) => {
-//       // Check if the formatted address exactly matches the input address
-//       const formattedAddress = result.formatted.toLowerCase();
-//       return formattedAddress === address.toLowerCase();
-//     });
-
-//     // If an exact match is found, return the coordinates
-//     if (exactMatch) {
-//       const location = exactMatch.geometry;
-//       return [location.lng, location.lat]; // Return coordinates [longitude, latitude]
-//     } else {
-//       throw new Error("Exact location not found");
-//     }
-//   }
-//   throw new Error("Location not found");
-// }
 
 async function getCoordinates(address) {
   const apiKey = process.env.OPEN_CAGE_API_KEY; // Replace with your actual API key
   const url = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(
-    address,
-  )}&key=${apiKey}`;
+    address
+  )}&key=${apiKey}&components=country:NP`; // Restrict to Nepal using country code NP
 
   const response = await axios.get(url);
 
   if (response.data.results.length > 0) {
     const location = response.data.results[0].geometry;
+
+    // Check if the result is in Nepal
+    const isInNepal = response.data.results[0].components.country === 'Nepal';
+    if (!isInNepal) {
+      throw new Error("Address is not within Nepal");
+    }
+
     return [location.lng, location.lat]; // Return coordinates [longitude, latitude]
   }
   throw new Error("Location not found");
@@ -59,36 +39,53 @@ async function getCoordinates(address) {
  *      @method POST
  /********************************************/
 
-exports.addHotels = asyncHandler(async (req, res, next) => {
+ exports.addHotels = asyncHandler(async (req, res, next) => {
   const { hotelName, description, address, phone, category, rooms } = req.body;
 
-  console.log(req?.file, "filee path");
-  console.log(req?.files, "filee path");
-  console.log(req.body);
-  const coordinates = await getCoordinates(address);
-  console.log(coordinates, "COORDINATES............................");
+  // Validation for required fields
+  if (!hotelName || !description || !address || !phone || !category) {
+    return res.status(400).json({
+      success: false,
+      message: "All fields are required: hotelName, description, address, phone, and category",
+    });
+  }
 
-  const hotels = await Hotel.create({
-    hotelName,
-    description,
-    address,
-    phone,
-    category,
-    image: req.file?.path,
-    location: {
-      type: "Point",
-      coordinates: coordinates,
-    },
-    // rooms: createdRoom._id,
-    // roomCategory: createdRoomCategory._id,
-  });
+  try {
+    console.log(req?.file, "file path");
+    console.log(req?.files, "file paths");
+    console.log(req.body);
 
-  res.status(200).json({
-    success: true,
-    message: "All Hotels",
-    hotels,
-  });
+    // Get coordinates and validate address
+    const coordinates = await getCoordinates(address);
+    console.log(coordinates, "COORDINATES............................");
+
+    const hotels = await Hotel.create({
+      hotelName,
+      description,
+      address,
+      phone,
+      category,
+      image: req.file?.path,
+      location: {
+        type: "Point",
+        coordinates: coordinates,
+      },
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Hotel added successfully",
+      data: hotels,
+    });
+  } catch (error) {
+    // Handle errors from validation or geocoding
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
 });
+
 
 /********************************************
  *     @description get all Hotels

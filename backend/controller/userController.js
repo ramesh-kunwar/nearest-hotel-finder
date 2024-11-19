@@ -15,16 +15,26 @@ const { generateToken } = require("../utils/generateToken");
 // Function to get coordinates from address using OpenCage API
 async function getCoordinates(address) {
   const apiKey = process.env.OPEN_CAGE_API_KEY; // Replace with your actual API key
-  const url = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(address)}&key=${apiKey}`;
+  const url = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(
+    address
+  )}&key=${apiKey}&components=country:NP`; // Restrict to Nepal using country code NP
 
   const response = await axios.get(url);
 
   if (response.data.results.length > 0) {
     const location = response.data.results[0].geometry;
+
+    // Check if the result is in Nepal
+    const isInNepal = response.data.results[0].components.country === 'Nepal';
+    if (!isInNepal) {
+      throw new Error("Address is not within Nepal");
+    }
+
     return [location.lng, location.lat]; // Return coordinates [longitude, latitude]
   }
   throw new Error("Location not found");
 }
+
 
 /********************************************
  *      @description register User
@@ -34,40 +44,48 @@ async function getCoordinates(address) {
  *      @method POST
  /********************************************/
 
-exports.registerUser = asyncHandler(async (req, res, next) => {
+ exports.registerUser = asyncHandler(async (req, res, next) => {
   const { name, email, password, phoneNumber, address } = req.body;
 
-  if (!name || !email || !password) {
+  if (!name || !email || !password || !address) {
     throw new ErrorResponse("All fields are required", 400);
-    // return res.status(400).json({ error: "All fields are required" });
   }
 
   const existingUser = await User.findOne({ email });
   if (existingUser) {
-    throw new ErrorResponse("User already exist", 400);
+    throw new ErrorResponse("User already exists", 400);
   }
 
-  // Get coordinates from the location string
-  const coordinates = await getCoordinates(address);
+  try {
+    // Get coordinates from the address and validate location
+    const coordinates = await getCoordinates(address);
 
-  const user = await User.create({
-    name,
-    email,
-    password,
-    phoneNumber,
-    location: {
-      type: "Point",
-      coordinates: coordinates,
-    },
-    address,
-  });
+    const user = await User.create({
+      name,
+      email,
+      password,
+      phoneNumber,
+      location: {
+        type: "Point",
+        coordinates: coordinates,
+      },
+      address,
+    });
 
-  res.status(200).json({
-    success: true,
-    message: "User registered successfully",
-    data: user,
-  });
+    res.status(200).json({
+      success: true,
+      message: "User registered successfully",
+      data: user,
+    });
+  } catch (error) {
+    // Handle errors from location validation
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
 });
+
 
 /********************************************
  *      @description login User

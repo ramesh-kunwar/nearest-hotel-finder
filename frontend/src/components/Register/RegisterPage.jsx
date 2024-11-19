@@ -26,7 +26,7 @@ const RegisterPage = () => {
         dispatch(setCredentials(data));
         console.log("User Registered Successfully");
         toast.success("User Registered Successfully");
-        navigate("/");
+        navigate("/login");
       })
       .catch(function (error) {
         console.log(error);
